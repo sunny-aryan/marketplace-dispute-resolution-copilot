@@ -3,6 +3,7 @@ import os
 
 from dotenv import load_dotenv
 from openai import OpenAI
+from src.services.service_health import is_service_degraded
 from pydantic import BaseModel, Field
 
 from src.audit.audit_repository import create_audit_event
@@ -38,6 +39,11 @@ def run_investigation(case: dict, actor: str = "reviewer_001") -> dict:
     allowed_workflow_actions = get_allowed_actions(case["status"])
 
     try:
+        if is_service_degraded("ai_investigation_service"):
+            raise RuntimeError(
+                "AI investigation service is configured as degraded."
+            )
+
         investigation = _run_openai_investigation(
             case=case,
             policy_result=policy_result,

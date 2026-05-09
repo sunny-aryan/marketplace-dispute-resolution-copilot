@@ -88,6 +88,21 @@ It cannot finalize a refund, denial, case closure, or seller compensation. Final
 
 If the OpenAI API is unavailable or not configured, the app falls back to a deterministic reviewer brief so the workflow remains usable.
 
+## Service Degradation Handling
+
+## Service Degradation Handling
+
+The app includes service health controls in the Streamlit sidebar.
+
+The AI investigation service can run in two modes:
+
+- `healthy`: the app attempts to use OpenAI first and falls back only if the API call fails
+- `degraded`: the app skips OpenAI and directly generates a deterministic fallback investigation brief
+
+The selected service status is persisted in `data/service_health.json`.
+
+This allows the workflow to remain usable even when the external AI dependency is unavailable, and makes degraded-mode behavior easy to demo from the UI.
+
 ## How to Run Locally
 
 1. Clone the repository.

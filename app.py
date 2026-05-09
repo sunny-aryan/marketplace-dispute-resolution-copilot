@@ -12,6 +12,7 @@ from src.policy.policy_engine import evaluate_policy
 from src.workflow.action_service import submit_reviewer_action
 from src.workflow.decision_service import validate_reviewer_action
 from src.workflow.state_machine import get_allowed_actions
+from src.services.service_health import get_service_status, set_service_status
 
 
 SEED_DATA_PATH = Path("data/seed_cases.json")
@@ -55,6 +56,24 @@ st.set_page_config(
     page_icon="⚖️",
     layout="wide",
 )
+
+st.sidebar.subheader("Service Health Controls")
+
+current_ai_status = get_service_status("ai_investigation_service")
+
+selected_ai_status = st.sidebar.selectbox(
+    "AI investigation service status",
+    options=["healthy", "degraded"],
+    index=0 if current_ai_status == "healthy" else 1,
+)
+
+if st.sidebar.button("Apply service health"):
+    set_service_status(
+        service_name="ai_investigation_service",
+        status=selected_ai_status,
+    )
+    st.sidebar.success("Service health updated.")
+    st.rerun()
 
 st.title("Marketplace Dispute Resolution Copilot")
 
@@ -181,6 +200,13 @@ st.caption(
     "The investigation can summarize evidence, identify contradictions, "
     "highlight missing information, and recommend a next action within system boundaries."
 )
+
+ai_service_status = get_service_status("ai_investigation_service")
+
+if ai_service_status == "healthy":
+    st.success("AI investigation service status: healthy")
+else:
+    st.warning("AI investigation service status: degraded")
 
 if st.button("Run Investigation"):
     investigation_result = run_investigation(selected_case)
