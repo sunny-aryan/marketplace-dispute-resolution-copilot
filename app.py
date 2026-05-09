@@ -1,7 +1,10 @@
 import json
+from dataclasses import asdict
 from pathlib import Path
 
 import streamlit as st
+
+from src.policy.policy_engine import evaluate_policy
 
 
 DATA_PATH = Path("data/seed_cases.json")
@@ -21,6 +24,8 @@ def build_queue_rows(cases):
     rows = []
 
     for case in cases:
+        policy_result = evaluate_policy(case)
+
         rows.append(
             {
                 "Case ID": case["case_id"],
@@ -30,6 +35,8 @@ def build_queue_rows(cases):
                 "Buyer Risk": case["buyer"]["risk_tier"],
                 "Seller Response": case["seller"]["response_status"],
                 "Delivery Status": case["delivery"]["delivery_status"],
+                "Recommended Action": policy_result.recommended_action,
+                "Escalation Required": policy_result.requires_escalation,
                 "SLA Due": case["sla_due_at"],
             }
         )
@@ -75,6 +82,7 @@ selected_case_id = st.selectbox(
 )
 
 selected_case = next(case for case in cases if case["case_id"] == selected_case_id)
+policy_result = evaluate_policy(selected_case)
 
 st.subheader(f"Case Detail: {selected_case['case_id']}")
 
@@ -99,6 +107,47 @@ with right_col:
 
     st.markdown("### Current Workflow State")
     st.info(selected_case["status"])
+
+st.divider()
+
+st.subheader("Deterministic Policy Evaluation")
+
+policy_left, policy_right = st.columns(2)
+
+with policy_left:
+    st.markdown("### Recommended Action")
+    st.success(policy_result.recommended_action)
+
+    st.markdown("### Confidence")
+    st.info(policy_result.confidence)
+
+    st.markdown("### Escalation Required")
+    if policy_result.requires_escalation:
+        st.warning("Yes")
+    else:
+        st.success("No")
+
+    st.markdown("### Eligible Actions")
+    st.json(policy_result.eligible_actions)
+
+with policy_right:
+    st.markdown("### Blocked Actions")
+    st.json(policy_result.blocked_actions)
+
+    st.markdown("### Required Evidence")
+    st.json(policy_result.required_evidence)
+
+    st.markdown("### Ambiguity Flags")
+    st.json(policy_result.ambiguity_flags)
+
+    st.markdown("### Risk Flags")
+    st.json(policy_result.risk_flags)
+
+st.markdown("### Policy Rationale")
+st.write(policy_result.policy_rationale)
+
+with st.expander("Raw Policy Result"):
+    st.json(asdict(policy_result))
 
 st.divider()
 
