@@ -66,3 +66,38 @@ Tool Registry
    ↓
 Persistence Layer
 ```
+
+## How to Run Locally
+
+1. Clone the repository.
+
+```bash
+git clone https://github.com/sunny-aryan/marketplace-dispute-resolution-copilot.git
+cd marketplace-dispute-resolution-copilot
+```
+
+2. Create a virtual environment.
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+3. Install dependencies.
+
+```bash
+pip install -r requirements.txt
+```
+
+4. Run the Streamlit app.
+
+```bash
+streamlit run app.py
+```
+
+5. Open the local app.
+Streamlit will print a local URL in the terminal, usually:
+
+```bash
+http://localhost:8501
+```
