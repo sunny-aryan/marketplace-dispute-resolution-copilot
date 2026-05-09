@@ -1,6 +1,6 @@
 # Marketplace Dispute Resolution Copilot
 
-A human-in-the-loop workflow prototype for marketplace dispute resolution.
+> Project 2 in my GitHub product portfolio, focused on human-in-the-loop AI workflow automation for marketplace dispute resolution.
 
 This project explores how AI-enabled workflow automation can support support agents and trust & safety reviewers in resolving buyer-seller disputes with incomplete, conflicting, or ambiguous evidence.
 
