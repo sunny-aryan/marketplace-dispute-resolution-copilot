@@ -20,7 +20,7 @@ The system uses AI to reduce reviewer cognitive load, but deterministic policy r
 
 The goal is not to automate final dispute decisions.
 
-### Product Principle
+## Product Principle
 
 > **Automate preparation, not accountability.**
 
