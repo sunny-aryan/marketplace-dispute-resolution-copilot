@@ -1,6 +1,7 @@
 import json
 from dataclasses import asdict
 from pathlib import Path
+from src.agents.investigation_agent import run_investigation
 
 import streamlit as st
 
@@ -170,6 +171,67 @@ with st.expander("Raw Policy Result"):
     st.json(asdict(policy_result))
 
 st.divider()
+
+st.divider()
+
+st.subheader("AI-Assisted Investigation")
+
+st.caption(
+    "Runs a bounded investigation after deterministic policy evaluation. "
+    "The investigation can summarize evidence, identify contradictions, "
+    "highlight missing information, and recommend a next action within system boundaries."
+)
+
+if st.button("Run Investigation"):
+    investigation_result = run_investigation(selected_case)
+
+    if investigation_result["source"] == "openai":
+        st.success("Investigation generated using OpenAI.")
+    else:
+        st.warning("OpenAI unavailable or not configured. Fallback investigation generated.")
+
+    st.markdown("### Case Summary")
+    st.write(investigation_result["case_summary"])
+
+    st.markdown("### Key Evidence")
+    for item in investigation_result["key_evidence"]:
+        st.write(f"- {item}")
+
+    st.markdown("### Contradictions")
+    if investigation_result["contradictions"]:
+        for item in investigation_result["contradictions"]:
+            st.write(f"- {item}")
+    else:
+        st.write("No major contradictions identified.")
+
+    st.markdown("### Missing Evidence")
+    if investigation_result["missing_evidence"]:
+        for item in investigation_result["missing_evidence"]:
+            st.write(f"- {item}")
+    else:
+        st.write("No required evidence gaps identified.")
+
+    st.markdown("### Risk Considerations")
+    if investigation_result["risk_considerations"]:
+        for item in investigation_result["risk_considerations"]:
+            st.write(f"- {item}")
+    else:
+        st.write("No major risk flags identified.")
+
+    st.markdown("### Recommended Next Action")
+    st.info(investigation_result["recommended_next_action"])
+
+    st.markdown("### Confidence")
+    st.info(investigation_result["confidence"])
+
+    st.markdown("### Reviewer Brief")
+    st.write(investigation_result["reviewer_brief"])
+
+    st.markdown("### Human Review Required")
+    st.warning(str(investigation_result["human_review_required"]))
+
+    with st.expander("Raw Investigation Result"):
+        st.json(investigation_result)
 
 st.subheader("Reviewer Action Validation")
 

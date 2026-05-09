@@ -67,6 +67,27 @@ Tool Registry
 Persistence Layer
 ```
 
+## AI-Assisted Investigation
+
+The project includes a bounded investigation agent that prepares dispute cases for human review.
+
+The investigation agent receives deterministic policy outputs before generating its reviewer brief. This means the agent sees:
+
+- eligible actions
+- blocked actions
+- required evidence
+- ambiguity flags
+- risk flags
+- escalation requirements
+- current workflow state
+- allowed workflow actions
+
+The agent can summarize evidence, identify contradictions, highlight missing information, and recommend a next action within system boundaries.
+
+It cannot finalize a refund, denial, case closure, or seller compensation. Final outcomes still require reviewer submission, workflow validation, deterministic policy checks, and audit logging.
+
+If the OpenAI API is unavailable or not configured, the app falls back to a deterministic reviewer brief so the workflow remains usable.
+
 ## How to Run Locally
 
 1. Clone the repository.
@@ -89,19 +110,31 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Initialize the local SQLite database.
+4. Create a `.env` file.
+
+```bash
+cp .env.example .env
+```
+
+Add your OpenAI API key:
+
+```text
+OPENAI_API_KEY=your_api_key_here
+```
+
+5. Initialize the local SQLite database.
 
 ```bash
 python scripts/init_db.py
 ```
 
-5. Run the Streamlit app.
+6. Run the Streamlit app.
 
 ```bash
 streamlit run app.py
 ```
 
-6. Open the local app.
+7. Open the local app.
 Streamlit will print a local URL in the terminal, usually:
 
 ```bash
