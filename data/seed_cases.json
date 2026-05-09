@@ -1,0 +1,177 @@
+[
+  {
+    "case_id": "DSP-1001",
+    "status": "ready_for_review",
+    "claim_type": "item_not_received",
+    "created_at": "2026-05-09T09:00:00Z",
+    "sla_due_at": "2026-05-10T09:00:00Z",
+    "order": {
+      "order_id": "ORD-9001",
+      "order_value": 84.5,
+      "currency": "EUR",
+      "category": "electronics_accessory"
+    },
+    "buyer": {
+      "buyer_id": "BUY-101",
+      "account_age_days": 420,
+      "prior_disputes_90d": 1,
+      "risk_tier": "low"
+    },
+    "seller": {
+      "seller_id": "SEL-221",
+      "seller_rating": 4.7,
+      "prior_disputes_90d": 3,
+      "response_status": "responded"
+    },
+    "claim": {
+      "buyer_message": "The courier marked this as delivered, but I never received the package.",
+      "requested_outcome": "full_refund",
+      "submitted_evidence": ["buyer_message"]
+    },
+    "delivery": {
+      "delivery_status": "delivered",
+      "proof_of_delivery": "missing",
+      "tracking_events": ["out_for_delivery", "marked_delivered"]
+    }
+  },
+  {
+    "case_id": "DSP-1002",
+    "status": "ready_for_review",
+    "claim_type": "damaged_item",
+    "created_at": "2026-05-09T10:30:00Z",
+    "sla_due_at": "2026-05-10T10:30:00Z",
+    "order": {
+      "order_id": "ORD-9002",
+      "order_value": 42.0,
+      "currency": "EUR",
+      "category": "home_goods"
+    },
+    "buyer": {
+      "buyer_id": "BUY-202",
+      "account_age_days": 180,
+      "prior_disputes_90d": 0,
+      "risk_tier": "low"
+    },
+    "seller": {
+      "seller_id": "SEL-305",
+      "seller_rating": 4.2,
+      "prior_disputes_90d": 6,
+      "response_status": "responded"
+    },
+    "claim": {
+      "buyer_message": "The item arrived broken and the packaging was visibly damaged.",
+      "requested_outcome": "replacement_or_refund",
+      "submitted_evidence": ["buyer_message", "photo_evidence"]
+    },
+    "delivery": {
+      "delivery_status": "delivered",
+      "proof_of_delivery": "available",
+      "tracking_events": ["picked_up", "in_transit", "delivered"]
+    }
+  },
+  {
+    "case_id": "DSP-1003",
+    "status": "ready_for_review",
+    "claim_type": "item_not_received",
+    "created_at": "2026-05-09T11:15:00Z",
+    "sla_due_at": "2026-05-10T11:15:00Z",
+    "order": {
+      "order_id": "ORD-9003",
+      "order_value": 420.0,
+      "currency": "EUR",
+      "category": "consumer_electronics"
+    },
+    "buyer": {
+      "buyer_id": "BUY-303",
+      "account_age_days": 45,
+      "prior_disputes_90d": 5,
+      "risk_tier": "high"
+    },
+    "seller": {
+      "seller_id": "SEL-410",
+      "seller_rating": 4.9,
+      "prior_disputes_90d": 1,
+      "response_status": "responded"
+    },
+    "claim": {
+      "buyer_message": "I did not receive this order, even though the seller says it was delivered.",
+      "requested_outcome": "full_refund",
+      "submitted_evidence": ["buyer_message"]
+    },
+    "delivery": {
+      "delivery_status": "delivered",
+      "proof_of_delivery": "available",
+      "tracking_events": ["picked_up", "in_transit", "delivered"]
+    }
+  },
+  {
+    "case_id": "DSP-1004",
+    "status": "evidence_pending",
+    "claim_type": "late_delivery",
+    "created_at": "2026-05-09T12:00:00Z",
+    "sla_due_at": "2026-05-11T12:00:00Z",
+    "order": {
+      "order_id": "ORD-9004",
+      "order_value": 65.99,
+      "currency": "EUR",
+      "category": "fashion"
+    },
+    "buyer": {
+      "buyer_id": "BUY-404",
+      "account_age_days": 760,
+      "prior_disputes_90d": 0,
+      "risk_tier": "low"
+    },
+    "seller": {
+      "seller_id": "SEL-510",
+      "seller_rating": 4.5,
+      "prior_disputes_90d": 2,
+      "response_status": "pending"
+    },
+    "claim": {
+      "buyer_message": "The item arrived much later than promised, and I no longer needed it.",
+      "requested_outcome": "partial_refund",
+      "submitted_evidence": ["buyer_message"]
+    },
+    "delivery": {
+      "delivery_status": "delivered_late",
+      "proof_of_delivery": "available",
+      "tracking_events": ["picked_up", "delayed_in_transit", "delivered"]
+    }
+  },
+  {
+    "case_id": "DSP-1005",
+    "status": "escalated",
+    "claim_type": "policy_ambiguous_return",
+    "created_at": "2026-05-09T13:00:00Z",
+    "sla_due_at": "2026-05-10T13:00:00Z",
+    "order": {
+      "order_id": "ORD-9005",
+      "order_value": 180.0,
+      "currency": "EUR",
+      "category": "special_category_item"
+    },
+    "buyer": {
+      "buyer_id": "BUY-505",
+      "account_age_days": 300,
+      "prior_disputes_90d": 2,
+      "risk_tier": "medium"
+    },
+    "seller": {
+      "seller_id": "SEL-610",
+      "seller_rating": 4.6,
+      "prior_disputes_90d": 2,
+      "response_status": "responded"
+    },
+    "claim": {
+      "buyer_message": "I want to return this item, but the seller says this category is not eligible.",
+      "requested_outcome": "return_and_refund",
+      "submitted_evidence": ["buyer_message", "seller_message"]
+    },
+    "delivery": {
+      "delivery_status": "delivered",
+      "proof_of_delivery": "available",
+      "tracking_events": ["picked_up", "in_transit", "delivered"]
+    }
+  }
+]
