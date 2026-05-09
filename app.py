@@ -5,6 +5,7 @@ from pathlib import Path
 import streamlit as st
 
 from src.policy.policy_engine import evaluate_policy
+from src.workflow.state_machine import get_allowed_actions
 
 
 DATA_PATH = Path("data/seed_cases.json")
@@ -107,6 +108,14 @@ with right_col:
 
     st.markdown("### Current Workflow State")
     st.info(selected_case["status"])
+
+    st.markdown("### Allowed Workflow Actions")
+    allowed_actions = get_allowed_actions(selected_case["status"])
+
+    if allowed_actions:
+        st.json(allowed_actions)
+    else:
+        st.warning("No further workflow actions are available from this state.")
 
 st.divider()
 
