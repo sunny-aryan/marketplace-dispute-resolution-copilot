@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environment
+.venv/
+venv/
+
+# Environment variables
+.env
+
+# Local databases
+data/*.db
+data/*.sqlite
+
+# OS files
+.DS_Store
+
+# Streamlit
+.streamlit/secrets.toml
