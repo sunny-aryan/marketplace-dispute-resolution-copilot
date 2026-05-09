@@ -5,6 +5,7 @@ from pathlib import Path
 import streamlit as st
 
 from src.policy.policy_engine import evaluate_policy
+from src.workflow.decision_service import validate_reviewer_action
 from src.workflow.state_machine import get_allowed_actions
 
 
@@ -157,6 +158,64 @@ st.write(policy_result.policy_rationale)
 
 with st.expander("Raw Policy Result"):
     st.json(asdict(policy_result))
+
+st.divider()
+
+st.subheader("Reviewer Action Validation")
+
+st.caption(
+    "This panel validates a proposed reviewer action against workflow state rules, "
+    "deterministic policy constraints, and human rationale requirements. "
+    "It does not persist state changes yet."
+)
+
+available_actions = get_allowed_actions(selected_case["status"])
+
+if not available_actions:
+    st.warning("This case has no available workflow actions from its current state.")
+else:
+    selected_action = st.selectbox(
+        "Select proposed agent action",
+        options=available_actions,
+    )
+
+    rationale = st.text_area(
+        "Human rationale",
+        placeholder=(
+            "Explain why this action is appropriate. Required for resolution, "
+            "escalation, and evidence-request actions."
+        ),
+    )
+
+    if st.button("Validate Decision"):
+        decision_result = validate_reviewer_action(
+            case=selected_case,
+            action=selected_action,
+            rationale=rationale,
+        )
+
+        if decision_result.allowed:
+            st.success(
+                f"Decision allowed. Next state: {decision_result.next_state}"
+            )
+        else:
+            st.error("Decision blocked.")
+
+        st.markdown("### Validation Reasons")
+        for reason in decision_result.reasons:
+            st.write(f"- {reason}")
+
+        with st.expander("Raw Decision Validation Result"):
+            st.json(
+                {
+                    "case_id": decision_result.case_id,
+                    "action": decision_result.action,
+                    "current_state": decision_result.current_state,
+                    "allowed": decision_result.allowed,
+                    "next_state": decision_result.next_state,
+                    "reasons": decision_result.reasons,
+                }
+            )
 
 st.divider()
 
