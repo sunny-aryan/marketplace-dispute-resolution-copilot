@@ -246,6 +246,7 @@ Real marketplace dispute data is private and sensitive. Synthetic cases allow th
 
 The app includes service health controls so reviewers can simulate AI service degradation. When degraded, the workflow falls back to a deterministic reviewer brief instead of failing.
 
+
 ## Failure Modes Covered
 
 | Failure Mode | System Behavior |
@@ -340,6 +341,12 @@ http://localhost:8501
 ```
 
 The app uses SQLite for local persistence. The generated database is ignored by Git and can be recreated from `data/seed_cases.json`.
+
+## Trade-offs
+
+This project intentionally prioritizes workflow realism, deterministic controls, and human-in-the-loop decisioning over production infrastructure completeness.
+
+For a detailed explanation of key product and architecture trade-offs, see [TRADEOFFS.md](TRADEOFFS.md).
 
 ## Future Improvements
 
