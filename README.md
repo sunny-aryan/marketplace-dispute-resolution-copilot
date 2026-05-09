@@ -342,6 +342,10 @@ http://localhost:8501
 
 The app uses SQLite for local persistence. The generated database is ignored by Git and can be recreated from `data/seed_cases.json`.
 
+## Product Notes
+
+For additional product context, including target users, jobs-to-be-done, success metrics, rollout considerations, and how this project improves on [Project 1: Safe Treasury Copilot](https://github.com/sunny-aryan/safe-treasury-copilot), see [PRODUCT_NOTES.md](PRODUCT_NOTES.md).
+
 ## Trade-offs
 
 This project intentionally prioritizes workflow realism, deterministic controls, and human-in-the-loop decisioning over production infrastructure completeness.
