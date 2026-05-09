@@ -146,10 +146,8 @@ agent_review
 ```
 
 
-Then explain:
-
 ```markdown
-The state machine prevents invalid workflow transitions. For example, a case cannot move directly from `ready_for_review` to `resolved_refund`. It must first pass through policy evaluation and reviewer validation.
+The lifecycle is controlled by a state machine, which prevents reviewers from jumping directly to final outcomes without passing through policy evaluation, validation, and audit logging. For example, a case cannot move directly from `ready_for_review` to `resolved_refund`. It must first pass through policy evaluation and reviewer validation.
 ```
 
 ## Example Workflow
