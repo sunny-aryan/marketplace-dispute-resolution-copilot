@@ -89,15 +89,23 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-4. Run the Streamlit app.
+4. Initialize the local SQLite database.
+
+```bash
+python scripts/init_db.py
+```
+
+5. Run the Streamlit app.
 
 ```bash
 streamlit run app.py
 ```
 
-5. Open the local app.
+6. Open the local app.
 Streamlit will print a local URL in the terminal, usually:
 
 ```bash
 http://localhost:8501
 ```
+
+The app uses SQLite for local persistence. The generated database is ignored by Git and can be recreated from `data/seed_cases.json`.

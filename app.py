@@ -4,18 +4,21 @@ from pathlib import Path
 
 import streamlit as st
 
+from src.audit.audit_repository import get_audit_events_for_case
+from src.persistence.case_repository import get_all_cases
+from src.persistence.database import DATABASE_PATH
 from src.policy.policy_engine import evaluate_policy
+from src.workflow.action_service import submit_reviewer_action
 from src.workflow.decision_service import validate_reviewer_action
 from src.workflow.state_machine import get_allowed_actions
 
 
-DATA_PATH = Path("data/seed_cases.json")
+SEED_DATA_PATH = Path("data/seed_cases.json")
 
 
 def load_cases():
-    """Load synthetic dispute cases from local JSON seed data."""
-    with DATA_PATH.open("r", encoding="utf-8") as file:
-        return json.load(file)
+    """Load dispute cases from SQLite."""
+    return get_all_cases()
 
 
 def format_money(order):
@@ -63,6 +66,13 @@ st.markdown(
 )
 
 st.divider()
+
+if not DATABASE_PATH.exists():
+    st.error(
+        "Local database not found. Run `python scripts/init_db.py` from the "
+        "project root, then restart the Streamlit app."
+    )
+    st.stop()
 
 cases = load_cases()
 
@@ -166,7 +176,7 @@ st.subheader("Reviewer Action Validation")
 st.caption(
     "This panel validates a proposed reviewer action against workflow state rules, "
     "deterministic policy constraints, and human rationale requirements. "
-    "It does not persist state changes yet."
+    "Validated actions can be submitted to update case state and create an audit event."
 )
 
 available_actions = get_allowed_actions(selected_case["status"])
@@ -175,7 +185,7 @@ if not available_actions:
     st.warning("This case has no available workflow actions from its current state.")
 else:
     selected_action = st.selectbox(
-        "Select proposed agent action",
+        "Select proposed reviewer action",
         options=available_actions,
     )
 
@@ -187,35 +197,86 @@ else:
         ),
     )
 
-    if st.button("Validate Decision"):
-        decision_result = validate_reviewer_action(
+    validate_clicked = st.button("Validate Action")
+
+    if validate_clicked:
+        validation_result = validate_reviewer_action(
             case=selected_case,
             action=selected_action,
             rationale=rationale,
         )
 
-        if decision_result.allowed:
+        if validation_result.allowed:
             st.success(
-                f"Decision allowed. Next state: {decision_result.next_state}"
+                f"Action allowed. Next state: {validation_result.next_state}"
             )
         else:
-            st.error("Decision blocked.")
+            st.error("Action blocked.")
 
         st.markdown("### Validation Reasons")
-        for reason in decision_result.reasons:
+        for reason in validation_result.reasons:
             st.write(f"- {reason}")
 
-        with st.expander("Raw Decision Validation Result"):
+        with st.expander("Raw Action Validation Result"):
             st.json(
                 {
-                    "case_id": decision_result.case_id,
-                    "action": decision_result.action,
-                    "current_state": decision_result.current_state,
-                    "allowed": decision_result.allowed,
-                    "next_state": decision_result.next_state,
-                    "reasons": decision_result.reasons,
+                    "case_id": validation_result.case_id,
+                    "action": validation_result.action,
+                    "current_state": validation_result.current_state,
+                    "allowed": validation_result.allowed,
+                    "next_state": validation_result.next_state,
+                    "reasons": validation_result.reasons,
                 }
             )
+
+    submit_clicked = st.button("Submit Action")
+
+    if submit_clicked:
+        submission_result = submit_reviewer_action(
+            case=selected_case,
+            action=selected_action,
+            rationale=rationale,
+        )
+
+        if submission_result.submitted:
+            st.success(
+                f"Action submitted. Case moved from "
+                f"{submission_result.from_status} to {submission_result.to_status}."
+            )
+            st.info("Refresh or reselect the case to view updated state.")
+        else:
+            st.error("Action was not submitted.")
+
+        st.markdown("### Submission Reasons")
+        for reason in submission_result.reasons:
+            st.write(f"- {reason}")
+
+        if submission_result.audit_event:
+            with st.expander("Created Audit Event"):
+                st.json(submission_result.audit_event)
+
+st.divider()
+
+st.subheader("Audit Trail")
+
+audit_events = get_audit_events_for_case(selected_case["case_id"])
+
+if not audit_events:
+    st.info("No audit events recorded for this case yet.")
+else:
+    for event in audit_events:
+        st.markdown(
+            f"**{event['event_type']}** — {event['timestamp']}  \n"
+            f"Actor: `{event['actor']}`  \n"
+            f"Action: `{event['action']}`  \n"
+            f"State: `{event['from_status']}` → `{event['to_status']}`"
+        )
+
+        if event["rationale"]:
+            st.write(f"Rationale: {event['rationale']}")
+
+        with st.expander(f"Audit details: {event['event_id']}"):
+            st.json(event)
 
 st.divider()
 
