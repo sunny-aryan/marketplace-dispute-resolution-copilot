@@ -102,6 +102,7 @@ def test_damaged_item_with_photo_evidence_allows_refund_options():
 def test_policy_ambiguous_return_requires_escalation():
     case = {
         "case_id": "DSP-TEST-004",
+        "status": "ready_for_review",
         "claim_type": "policy_ambiguous_return",
         "order": {
             "order_value": 180.0,
@@ -159,3 +160,37 @@ def test_late_delivery_allows_partial_refund():
     assert "seller_warning" in result.eligible_actions
     assert result.recommended_action == "partial_refund"
     assert result.requires_escalation is False
+
+def test_escalated_policy_ambiguous_return_has_resolution_options():
+    case = {
+        "case_id": "DSP-TEST-006",
+        "status": "escalated",
+        "claim_type": "policy_ambiguous_return",
+        "order": {
+            "order_value": 180.0,
+        },
+        "buyer": {
+            "risk_tier": "medium",
+            "prior_disputes_90d": 2,
+        },
+        "seller": {
+            "response_status": "responded",
+        },
+        "claim": {
+            "submitted_evidence": ["buyer_message", "seller_message"],
+        },
+        "delivery": {
+            "delivery_status": "delivered",
+            "proof_of_delivery": "available",
+        },
+    }
+
+    result = evaluate_policy(case)
+
+    assert result.requires_escalation is False
+    assert "request_more_evidence" in result.eligible_actions
+    assert "partial_refund" in result.eligible_actions
+    assert "deny_claim" in result.eligible_actions
+    assert result.recommended_action == "request_more_evidence"
+    assert result.confidence == "low"
+

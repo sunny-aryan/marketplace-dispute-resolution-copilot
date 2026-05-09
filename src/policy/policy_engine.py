@@ -130,8 +130,17 @@ def _evaluate_claim_type(claim_type: str, case: dict, result: PolicyResult) -> N
 
     elif claim_type == "policy_ambiguous_return":
         result.ambiguity_flags.append("category_policy_ambiguous")
-        result.requires_escalation = True
-        result.eligible_actions.append("escalate")
+
+        case_status = case.get("status", "ready_for_review")
+
+        if case_status == "escalated":
+            result.eligible_actions.append("request_more_evidence")
+            result.eligible_actions.append("partial_refund")
+            result.eligible_actions.append("deny_claim")
+            result.confidence = "low"
+        else:
+            result.requires_escalation = True
+            result.eligible_actions.append("escalate")
 
     elif claim_type == "item_not_received":
         result.eligible_actions.append("refund_buyer")
@@ -149,6 +158,12 @@ def _derive_recommendation(result: PolicyResult) -> None:
         result.recommended_action = "request_more_evidence"
         result.confidence = "medium"
         return
+
+    if "category_policy_ambiguous" in result.ambiguity_flags:
+        if "request_more_evidence" in result.eligible_actions:
+            result.recommended_action = "request_more_evidence"
+            result.confidence = "low"
+            return
 
     if "partial_refund" in result.eligible_actions:
         result.recommended_action = "partial_refund"

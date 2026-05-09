@@ -206,3 +206,51 @@ def test_escalation_from_evidence_pending_is_allowed_with_rationale():
 
     assert result.allowed is True
     assert result.next_state == "escalated"
+
+def escalated_policy_ambiguous_return_case(status="escalated"):
+    return {
+        "case_id": "DSP-TEST-AMBIGUOUS",
+        "status": status,
+        "claim_type": "policy_ambiguous_return",
+        "order": {
+            "order_value": 180.0,
+        },
+        "buyer": {
+            "risk_tier": "medium",
+            "prior_disputes_90d": 2,
+        },
+        "seller": {
+            "response_status": "responded",
+        },
+        "claim": {
+            "submitted_evidence": ["buyer_message", "seller_message"],
+        },
+        "delivery": {
+            "delivery_status": "delivered",
+            "proof_of_delivery": "available",
+        },
+    }
+
+def test_senior_reviewer_can_resolve_escalated_ambiguous_return_with_denial():
+    case = escalated_policy_ambiguous_return_case(status="escalated")
+
+    result = validate_reviewer_action(
+        case=case,
+        action="senior_reviewer_deny",
+        rationale="Senior reviewer confirmed special category policy does not allow return.",
+    )
+
+    assert result.allowed is True
+    assert result.next_state == "resolved_denied"
+
+def test_senior_reviewer_can_request_more_evidence_for_escalated_ambiguous_return():
+    case = escalated_policy_ambiguous_return_case(status="escalated")
+
+    result = validate_reviewer_action(
+        case=case,
+        action="request_more_evidence",
+        rationale="Additional documentation is required to resolve category eligibility.",
+    )
+
+    assert result.allowed is True
+    assert result.next_state == "evidence_pending"
