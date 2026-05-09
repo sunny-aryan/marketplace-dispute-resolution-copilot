@@ -168,6 +168,49 @@ The state machine prevents invalid workflow transitions. For example, a case can
 10. Audit trail records the reviewer action.
 11. Senior reviewer can approve refund, deny claim, request evidence, or apply partial resolution depending on policy constraints.
 
+## Product Walkthrough
+
+### Dispute Queue
+
+The queue gives reviewers an operational view of active disputes, including case status, claim type, buyer risk, seller response, delivery status, recommended action, and escalation requirement.
+
+![Dispute Queue](screenshots/01-dispute-queue.png)
+
+### Deterministic Policy Evaluation
+
+The policy engine evaluates eligible actions, blocked actions, required evidence, ambiguity flags, risk flags, escalation requirements, and policy rationale.
+
+![Policy Evaluation](screenshots/02a-policy-evaluation.png)
+![Policy Evaluation](screenshots/02b-policy-evaluation.png)
+
+### AI-Assisted Investigation
+
+The bounded investigation agent summarizes evidence, identifies contradictions, highlights missing information, and prepares a reviewer brief within deterministic policy boundaries.
+
+![AI Investigation Healthy](screenshots/03a-ai-investigation-healthy.png)
+![AI Investigation Healthy](screenshots/03b-ai-investigation-healthy.png)
+![AI Investigation Healthy](screenshots/03c-ai-investigation-healthy.png)
+
+### Degraded AI Mode
+
+When the AI investigation service is degraded, the system skips OpenAI and generates a deterministic fallback reviewer brief so the workflow remains usable.
+
+![AI Investigation Degraded](screenshots/04a-ai-investigation-degraded.png)
+![AI Investigation Degraded](screenshots/04b-ai-investigation-degraded.png)
+![AI Investigation Degraded](screenshots/04c-ai-investigation-degraded.png)
+
+### Reviewer Action Submission
+
+Reviewer actions are validated against workflow state rules, deterministic policy constraints, and rationale requirements before case state is updated.
+
+![Reviewer Action Submission](screenshots/05-reviewer-action-submission.png)
+
+### Audit Trail
+
+The audit trail records seeded cases, investigations, reviewer actions, state transitions, rationale, and validation context.
+
+![Audit Trail](screenshots/06-audit-trail.png)
+
 ## Service Degradation Handling
 
 The app includes service health controls in the Streamlit sidebar.
